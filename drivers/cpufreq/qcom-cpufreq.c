@@ -120,7 +120,6 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 {
 	int ret = -EFAULT;
 	int index;
-        unsigned int i;
 	struct cpufreq_frequency_table *table;
 
 	struct cpufreq_work_struct *cpu_work = NULL;
