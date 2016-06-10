@@ -120,6 +120,7 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 {
 	int ret = -EFAULT;
 	int index;
+        unsigned int i;
 	struct cpufreq_frequency_table *table;
 
 	struct cpufreq_work_struct *cpu_work = NULL;
@@ -134,6 +135,9 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 	}
 
 	table = cpufreq_frequency_get_table(policy->cpu);
+
+   
+
 	if (cpufreq_frequency_table_target(policy, table, target_freq, relation,
 			&index)) {
 		pr_err("cpufreq: invalid target_freq: %d\n", target_freq);
