@@ -926,6 +926,94 @@ struct kgsl_submit_commands {
 #define IOCTL_KGSL_SUBMIT_COMMANDS \
 	_IOWR(KGSL_IOC_TYPE, 0x3D, struct kgsl_submit_commands)
 
+
+/* Constraint Type*/
+#define KGSL_CONSTRAINT_NONE 0
+#define KGSL_CONSTRAINT_PWRLEVEL 1
+
+/* PWRLEVEL constraint level*/
+/* set to min frequency */
+#define KGSL_CONSTRAINT_PWR_MIN    0
+/* set to max frequency */
+#define KGSL_CONSTRAINT_PWR_MAX    1
+
+
+/**
+ * struct kgsl_syncsource_create - Argument to IOCTL_KGSL_SYNCSOURCE_CREATE
+ * @id: returned id for the syncsource that was created.
+ *
+ * This ioctl creates a userspace sync timeline.
+ */
+
+struct kgsl_syncsource_create {
+	unsigned int id;
+/* private: reserved for future use */
+	unsigned int __pad[3];
+};
+
+#define IOCTL_KGSL_SYNCSOURCE_CREATE \
+	_IOWR(KGSL_IOC_TYPE, 0x40, struct kgsl_syncsource_create)
+
+/**
+ * struct kgsl_syncsource_destroy - Argument to IOCTL_KGSL_SYNCSOURCE_DESTROY
+ * @id: syncsource id to destroy
+ *
+ * This ioctl creates a userspace sync timeline.
+ */
+
+struct kgsl_syncsource_destroy {
+	unsigned int id;
+/* private: reserved for future use */
+	unsigned int __pad[3];
+};
+
+#define IOCTL_KGSL_SYNCSOURCE_DESTROY \
+	_IOWR(KGSL_IOC_TYPE, 0x41, struct kgsl_syncsource_destroy)
+
+/**
+ * struct kgsl_syncsource_create_fence - Argument to
+ *     IOCTL_KGSL_SYNCSOURCE_CREATE_FENCE
+ * @id: syncsource id
+ * @fence_fd: returned sync_fence fd
+ *
+ * Create a fence that may be signaled by userspace by calling
+ * IOCTL_KGSL_SYNCSOURCE_SIGNAL_FENCE. There are no order dependencies between
+ * these fences.
+ */
+struct kgsl_syncsource_create_fence {
+	unsigned int id;
+	int fence_fd;
+/* private: reserved for future use */
+	unsigned int __pad[4];
+};
+
+/**
+ * struct kgsl_syncsource_signal_fence - Argument to
+ *     IOCTL_KGSL_SYNCSOURCE_SIGNAL_FENCE
+ * @id: syncsource id
+ * @fence_fd: sync_fence fd to signal
+ *
+ * Signal a fence that was created by a IOCTL_KGSL_SYNCSOURCE_CREATE_FENCE
+ * call using the same syncsource id. This allows a fence to be shared
+ * to other processes but only signaled by the process owning the fd
+ * used to create the fence.
+ */
+#define IOCTL_KGSL_SYNCSOURCE_CREATE_FENCE \
+	_IOWR(KGSL_IOC_TYPE, 0x42, struct kgsl_syncsource_create_fence)
+
+struct kgsl_syncsource_signal_fence {
+	unsigned int id;
+	int fence_fd;
+/* private: reserved for future use */
+	unsigned int __pad[4];
+};
+
+#define IOCTL_KGSL_SYNCSOURCE_SIGNAL_FENCE \
+	_IOWR(KGSL_IOC_TYPE, 0x43, struct kgsl_syncsource_signal_fence)
+
+
+
+
 /**
  * struct kgsl_device_constraint - device constraint argument
  * @context_id: KGSL context ID

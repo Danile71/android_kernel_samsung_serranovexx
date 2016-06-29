@@ -469,6 +469,9 @@ struct kgsl_process_private {
 		unsigned int cur;
 		unsigned int max;
 	} stats[KGSL_MEM_ENTRY_MAX];
+	struct idr syncsource_idr;
+	spinlock_t syncsource_lock;
+	int fd_count;
 };
 
 /**

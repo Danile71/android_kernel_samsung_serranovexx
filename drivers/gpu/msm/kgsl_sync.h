@@ -21,10 +21,12 @@ struct kgsl_sync_timeline {
 	unsigned int last_timestamp;
 	struct kgsl_device *device;
 	u32 context_id;
+        spinlock_t lock;
 };
 
 struct kgsl_sync_pt {
 	struct sync_pt pt;
+        struct kgsl_context *context;
 	unsigned int timestamp;
 };
 
@@ -76,5 +78,16 @@ kgsl_sync_fence_async_cancel(struct kgsl_sync_fence_waiter *waiter)
 }
 
 #endif
+struct kgsl_syncsource;
 
+long kgsl_ioctl_syncsource_create(struct kgsl_device_private *dev_priv,
+					unsigned int cmd, void *data);
+long kgsl_ioctl_syncsource_destroy(struct kgsl_device_private *dev_priv,
+					unsigned int cmd, void *data);
+long kgsl_ioctl_syncsource_create_fence(struct kgsl_device_private *dev_priv,
+					unsigned int cmd, void *data);
+long kgsl_ioctl_syncsource_signal_fence(struct kgsl_device_private *dev_priv,
+					unsigned int cmd, void *data);
+
+void kgsl_syncsource_put(struct kgsl_syncsource *syncsource);
 #endif /* __KGSL_SYNC_H */

@@ -18,7 +18,7 @@ mkdir $(pwd)/$out/boot/modules/
 
 
 make -C $(pwd) O=$out msm8916_sec_defconfig VARIANT_DEFCONFIG=msm8916_sec_serranovelte_eur_defconfig SELINUX_DEFCONFIG=selinux_defconfig
-make -C $(pwd) O=$out
+make -j4 -C $(pwd) O=$out
 
 
 
