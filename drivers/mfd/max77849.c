@@ -182,8 +182,6 @@ static int max77849_i2c_probe(struct i2c_client *i2c,
 	struct pinctrl *muic_pinctrl;
 	dev_info(&i2c->dev, "%s\n", __func__);
 
-
-	msleep(500);
 	max77849 = kzalloc(sizeof(struct max77849_dev), GFP_KERNEL);
 	if (max77849 == NULL)
 		return -ENOMEM;
