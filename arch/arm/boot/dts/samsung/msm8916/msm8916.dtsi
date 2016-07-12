@@ -22,6 +22,9 @@
 			<250 0>;
 
 	interrupt-parent = <&intc>;
+	chosen {
+		bootargs = "sched_enable_hmp=1";
+	};
 	aliases {
 		sdhc1 = &sdhc_1; /* SDC1 eMMC slot */
 		sdhc2 = &sdhc_2; /* SDC2 SD card slot */
@@ -218,7 +221,8 @@
 
 	restart@4ab000 {
 		compatible = "qcom,pshold";
-		reg = <0x4ab000 0x4>;
+		reg = <0x4ab000 0x4>,
+ 			<0x193d100 0x4>;
 	};
 
 	qcom,mpm2-sleep-counter@4a3000 {
@@ -341,6 +345,7 @@
 		      <0x5c000  0x1000>;
 		reg-names = "tsens_physical", "tsens_eeprom_physical";
 		interrupts = <0 184 0>;
+		interrupt-names = "tsens-upper-lower";
 		qcom,sensors = <5>;
 		qcom,slope = <3200 3200 3200 3200 3200>;
 		qcom,sensor-id = <0 1 2 4 5>;
@@ -541,6 +546,7 @@
 			 <&clock_rpm clk_xo_otg_clk>;
 		clock-names = "iface_clk", "core_clk", "sleep_clk",
 				"xo";
+		qcom,bus-clk-rate = <400000000 200000000 100000000>;
 	};
 
 	usb_noti: usb-notifier {
@@ -1439,7 +1445,7 @@
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
 			 <&clock_gcc clk_gcc_blsp1_qup5_i2c_apps_clk>;
 		clock-names = "iface_clk", "core_clk";
-		qcom,clk-freq-out = <384000>;
+		qcom,clk-freq-out = <400000>;
 		qcom,clk-freq-in  = <19200000>;
 		pinctrl-names = "i2c_active", "i2c_sleep";
 		pinctrl-0 = <&i2c_5_active>;
@@ -1571,11 +1577,11 @@
 		compatible = "qcom,msm-thermal";
 		qcom,sensor-id = <5>;
 		qcom,poll-ms = <250>;
-		qcom,limit-temp = <80>;
+		qcom,limit-temp = <60>;
 		qcom,temp-hysteresis = <10>;
 		qcom,freq-step = <2>;
 		qcom,freq-control-mask = <0xf>;
-		qcom,core-limit-temp = <85>;
+		qcom,core-limit-temp = <80>;
 		qcom,core-temp-hysteresis = <10>;
 		qcom,core-control-mask = <0xe>;
 		qcom,hotplug-temp = <105>;
@@ -1586,6 +1592,7 @@
 		qcom,freq-mitigation-temp-hysteresis = <15>;
 		qcom,freq-mitigation-value = <400000>;
 		qcom,freq-mitigation-control-mask = <0x01>;
+		qcom,online-hotplug-core;
 		qcom,vdd-restriction-temp = <5>;
 		qcom,vdd-restriction-temp-hysteresis = <10>;
 		vdd-dig-supply = <&pm8916_s1_floor_corner>;
@@ -1965,5 +1972,27 @@
 		qcom,fast-avg-setup = <0>;
 		qcom,btm-channel-number = <0x70>;
 		qcom,thermal-node;
+	};
+};
+
+&soc {
+	/* Samsung Feature for all MSM8916 models */
+	input_booster {
+		status = "disabled";
+		compatible = "input_booster";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+	/*	DVFS_STAGE_NONE		0x0001	: 0000 0000 0000 0001
+		DVFS_STAGE_SINGLE	0x0002	: 0000 0000 0000 0010
+		DVFS_STAGE_DUAL		0x0004	: 0000 0000 0000 0100 */
+
+		booster,tsp_stage = <0x0007>;	// supported stage with OR operation
+		booster,tkey_stage = <0x0001>;	// supported stage with OR operation
+		booster,wacom_stage = <0x0001>;	// supported stage with OR operation
+
+		booster,level = <2>;			// default level
+		booster,head = <130 1190400 0>;	// default head value <time cpu_freq bimc_freq>
+		booster,tail = <500 998400 0>;	// default tail value <time cpu_freq bimc_freq>
 	};
 };

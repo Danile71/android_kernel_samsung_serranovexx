@@ -28,3 +28,8 @@ $(pwd)/dtbTool -2 -o ./$out/boot/boot.img-dt -s 2048 -p ./$out/scripts/dtc/ ./$o
 
 find $(pwd)/$out/drivers/   -name "*.ko" -exec cp {} $(pwd)/$out/boot/modules/  \;
 
+cp $(pwd)/$out/boot/boot.img-kernel /home/danil_e71/Документы/android/repack/CarlivImageKitchen/boot/
+cp $(pwd)/$out/boot/boot.img-dt /home/danil_e71/Документы/android/repack/CarlivImageKitchen/boot/
+echo "Finish"
+
+

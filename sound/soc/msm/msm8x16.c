@@ -75,15 +75,6 @@ static int msm8x16_enable_extcodec_ext_clk(struct snd_soc_codec *codec,
 					int enable,	bool dapm);
 
 static int conf_int_codec_mux(struct msm8916_asoc_mach_data *pdata);
-#if defined(CONFIG_MACH_KOR_EARJACK_WR)
-extern void set_soundpath_state(void);
-
-bool is_primary_sound_on = false;
-bool primary_sound_onoff(void)
-{
-    return is_primary_sound_on;
-}
-#endif
 
 #ifndef CONFIG_SAMSUNG_JACK
 static struct wcd_mbhc_config mbhc_cfg = {
@@ -92,7 +83,7 @@ static struct wcd_mbhc_config mbhc_cfg = {
 	.detect_extn_cable = true,
 	.mono_stero_detection = false,
 	.swap_gnd_mic = NULL,
-	.hs_ext_micbias = true,
+	.hs_ext_micbias = false,
 };
 
 static struct wcd9xxx_mbhc_config wcd9xxx_mbhc_cfg = {
@@ -284,19 +275,10 @@ static int Secondary_mic_bias(struct snd_soc_dapm_widget *w,
 #ifdef CONFIG_DYNAMIC_MICBIAS_CONTROL
 static int mic_enable = false;
 static int jack_connected = false;
-static int dynamic_micb_ctrl_voltage = 0;
 
 int is_mic_enable(void)
 {
 	return mic_enable;
-}
-
-int set_dynamic_micb_ctrl_voltage(int voltage)
-{
-	/* Convert voltage to reg value */
-	dynamic_micb_ctrl_voltage = (voltage - 160) * 2 / 10;
-
-	return dynamic_micb_ctrl_voltage;
 }
 #endif
 
@@ -846,10 +828,10 @@ static int msm_btsco_rate_put(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
 	switch (ucontrol->value.integer.value[0]) {
-	case 0:
+	case 8000:
 		msm_btsco_rate = BTSCO_RATE_8KHZ;
 		break;
-	case 1:
+	case 16000:
 		msm_btsco_rate = BTSCO_RATE_16KHZ;
 		break;
 	default:
@@ -909,10 +891,6 @@ static int msm8x16_mclk_event(struct snd_soc_dapm_widget *w,
 				if (ret < 0)
 					pr_err("%s: error during pinctrl state select\n",
 							__func__);
-#if defined(CONFIG_MACH_KOR_EARJACK_WR)
-				is_primary_sound_on = false;
-				set_soundpath_state();
-#endif
 			}
 		}
 		break;
@@ -936,7 +914,7 @@ static void msm_mi2s_snd_shutdown(struct snd_pcm_substream *substream)
 #ifdef CONFIG_DYNAMIC_MICBIAS_CONTROL
 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE && jack_connected) {
 		mic_enable = false;
-		msm8x16_wcd_dynamic_control_micbias(dynamic_micb_ctrl_voltage);
+		msm8x16_wcd_dynamic_control_micbias(MIC_BIAS_V2P20V);
 	}
 #endif
 	if (!pdata->codec_type) {
@@ -1255,11 +1233,6 @@ static int msm_mi2s_snd_startup(struct snd_pcm_substream *substream)
 		msm8x16_wcd_dynamic_control_micbias(MIC_BIAS_V2P80V);
     }
 #endif
-#if defined(CONFIG_MACH_KOR_EARJACK_WR)
-	is_primary_sound_on = true;
-	set_soundpath_state();
-#endif
-
 	if (!pdata->codec_type) {
 		ret = conf_int_codec_mux(pdata);
 		if (ret < 0) {
@@ -1357,14 +1330,16 @@ static void *def_msm8x16_wcd_mbhc_cal(void)
 	 * all btn_low corresponds to threshold for current source
 	 * all bt_high corresponds to threshold for Micbias
 	 */
-	btn_low[0] = 13;
-	btn_high[0] = 169;
-	btn_low[1] = 21;
-	btn_high[1] = 263;
-	btn_low[2] = 46;
-	btn_high[2] = 563;
-	btn_low[3] = 97;
-	btn_high[3] = 1181;
+	btn_low[0] = 25;
+	btn_high[0] = 25;
+	btn_low[1] = 50;
+	btn_high[1] = 50;
+	btn_low[2] = 75;
+	btn_high[2] = 75;
+	btn_low[3] = 112;
+	btn_high[3] = 112;
+	btn_low[4] = 137;
+	btn_high[4] = 137;
 
 	return msm8x16_wcd_cal;
 }

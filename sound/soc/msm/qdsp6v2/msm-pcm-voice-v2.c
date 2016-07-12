@@ -377,12 +377,7 @@ static int msm_voice_gain_put(struct snd_kcontrol *kcontrol,
 		ret = -EINVAL;
 		goto done;
 	}
-#if defined(CONFIG_SEC_DEVIDE_RINGTONE_GAIN)
-	if (volume & 0x200) {
-		pr_debug("ringback tone volume ctrl\n");
-		volume -= 412; // (-0x200 & +100)
-	}
-#endif
+
 	pr_debug("%s: volume: %d session_id: %#x ramp_duration: %d\n", __func__,
 		volume, session_id, ramp_duration);
 
