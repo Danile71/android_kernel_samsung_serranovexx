@@ -31,17 +31,19 @@
 
 #define TOUCH_BOOSTER_DVFS
 
-#if defined(CONFIG_SEC_SERRANOVE_PROJECT)
-#define CLEAR_COVER		1
-#else
-#define CLEAR_COVER		0
-#endif
 
 #define DVFS_STAGE_TRIPLE       3
 #define DVFS_STAGE_DUAL         2
 #define DVFS_STAGE_SINGLE       1
 #define DVFS_STAGE_NONE         0
 #endif
+
+#if defined(CONFIG_SEC_SERRANOVE_PROJECT)
+#define CLEAR_COVER		1
+#else
+#define CLEAR_COVER		0
+#endif
+
 
 #ifdef CONFIG_SEC_SERRANOVE_PROJECT
 #include "serranove_fw.h"

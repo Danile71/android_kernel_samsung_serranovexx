@@ -73,6 +73,7 @@ struct cpufreq_policy {
 	unsigned int		cur;    /* in kHz, only needed if cpufreq
 					 * governors are used */
 	unsigned int		policy; /* see above */
+	unsigned int            util;  /* CPU utilization at max frequency */
 	struct cpufreq_governor	*governor; /* see below */
 	void			*governor_data;
 	bool			governor_enabled; /* governor start/stop flag */
@@ -313,7 +314,8 @@ static inline void cpufreq_verify_within_limits(struct cpufreq_policy *policy,
 		policy->min = policy->max;
 	return;
 }
-
+void cpufreq_notify_utilization(struct cpufreq_policy *policy,
+		unsigned int load);
 static inline void
 cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
 {
@@ -399,7 +401,7 @@ static inline unsigned long cpufreq_scale(unsigned long old, u_int div,
  */
 #define CPUFREQ_POLICY_POWERSAVE	(1)
 #define CPUFREQ_POLICY_PERFORMANCE	(2)
-
+#define MIN_CPU_UTIL_NOTIFY   40
 /* Governor Events */
 #define CPUFREQ_GOV_START	1
 #define CPUFREQ_GOV_STOP	2
