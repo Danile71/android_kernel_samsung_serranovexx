@@ -23,7 +23,7 @@
 
 		qcom,chipid = <0x03000600>;
 
-		qcom,initial-pwrlevel = <1>;
+		qcom,initial-pwrlevel = <2>;
 
 		/* Idle Timeout = HZ/12 */
 		qcom,idle-timeout = <8>;
@@ -70,6 +70,7 @@
 
 		/* CPU latency parameter */
 		qcom,pm-qos-latency = <701>;
+
 
 		/* Power levels */
 		qcom,gpu-pwrlevels {

@@ -635,6 +635,7 @@ struct mdp_overlay {
 	uint8_t vert_deci;
 	struct mdp_overlay_pp_params overlay_pp_cfg;
 	struct mdp_scale_data scale;
+	uint8_t color_space;
 };
 
 struct msmfb_overlay_3d {
