@@ -17,6 +17,9 @@
 #define MSMFB_SET_CCS_MATRIX  _IOW(MSMFB_IOCTL_MAGIC, 134, struct mdp_ccs)
 #define MSMFB_OVERLAY_SET       _IOWR(MSMFB_IOCTL_MAGIC, 135, \
 						struct mdp_overlay)
+#define OLD_MSMFB_OVERLAY_SET       _IOWR(MSMFB_IOCTL_MAGIC, 135, \
+						struct old_mdp_overlay)
+
 #define MSMFB_OVERLAY_UNSET     _IOW(MSMFB_IOCTL_MAGIC, 136, unsigned int)
 
 #define MSMFB_OVERLAY_PLAY      _IOW(MSMFB_IOCTL_MAGIC, 137, \
@@ -60,6 +63,8 @@
 #define MSMFB_OVERLAY_COMMIT      _IO(MSMFB_IOCTL_MAGIC, 163)
 #define MSMFB_DISPLAY_COMMIT      _IOW(MSMFB_IOCTL_MAGIC, 164, \
 						struct mdp_display_commit)
+#define OLD_MSMFB_DISPLAY_COMMIT      _IOW(MSMFB_IOCTL_MAGIC, 164, \
+						struct old_mdp_display_commit)
 #define MSMFB_METADATA_SET  _IOW(MSMFB_IOCTL_MAGIC, 165, struct msmfb_metadata)
 #define MSMFB_METADATA_GET  _IOW(MSMFB_IOCTL_MAGIC, 166, struct msmfb_metadata)
 #define MSMFB_WRITEBACK_SET_MIRRORING_HINT _IOW(MSMFB_IOCTL_MAGIC, 167, \
@@ -638,6 +643,27 @@ struct mdp_overlay {
 	uint8_t color_space;
 };
 
+struct old_mdp_overlay {
+	struct msmfb_img src;
+	struct mdp_rect src_rect;
+	struct mdp_rect dst_rect;
+	uint32_t z_order;	/* stage number */
+	uint32_t is_fg;		/* control alpha & transp */
+	uint32_t alpha;
+	uint32_t blend_op;
+	uint32_t transp_mask;
+	uint32_t flags;
+	uint32_t pipe_type;
+	uint32_t id;
+	uint8_t priority;
+	uint32_t user_data[6];
+	uint32_t bg_color;
+	uint8_t horz_deci;
+	uint8_t vert_deci;
+	struct mdp_overlay_pp_params overlay_pp_cfg;
+	struct mdp_scale_data scale;
+};
+
 struct msmfb_overlay_3d {
 	uint32_t is_3d;
 	uint32_t width;
@@ -1063,6 +1089,13 @@ struct mdp_display_commit {
 	struct fb_var_screeninfo var;
 	struct mdp_rect l_roi;
 	struct mdp_rect r_roi;
+};
+
+struct old_mdp_display_commit {
+	uint32_t flags;
+	uint32_t wait_for_finish;
+	struct fb_var_screeninfo var;
+	struct mdp_rect roi;
 };
 
 /**

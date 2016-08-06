@@ -2686,6 +2686,30 @@ static int mdss_fb_display_commit(struct fb_info *info,
 	ret = mdss_fb_pan_display_ex(info, &disp_commit);
 	return ret;
 }
+static int old_mdss_fb_display_commit(struct fb_info *info,
+						unsigned long *argp)
+{
+	int ret;
+        struct mdp_display_commit disp_commit;
+	struct old_mdp_display_commit old_disp_commit;
+	ret = copy_from_user(&old_disp_commit, argp,
+			sizeof(old_disp_commit));
+	if (ret) {
+		pr_err("%s:copy_from_user failed", __func__);
+		return ret;
+	}
+	disp_commit.flags=old_disp_commit.flags;
+	disp_commit.wait_for_finish=old_disp_commit.wait_for_finish;
+	disp_commit.var=old_disp_commit.var;
+	disp_commit.var=old_disp_commit.var;
+	disp_commit.l_roi=old_disp_commit.roi;
+	disp_commit.r_roi.x=0;
+	disp_commit.r_roi.y=0;
+	disp_commit.r_roi.w=0;
+	disp_commit.r_roi.h=0;
+	ret = mdss_fb_pan_display_ex(info, &disp_commit);
+	return ret;
+}
 
 static int __ioctl_wait_idle(struct msm_fb_data_type *mfd, u32 cmd)
 {
@@ -2796,6 +2820,12 @@ int mdss_fb_do_ioctl(struct fb_info *info, unsigned int cmd,
 	case MSMFB_DISPLAY_COMMIT:
 		ATRACE_BEGIN("MSMFB_DISPLAY_COMMIT");
 		ret = mdss_fb_display_commit(info, argp);
+		ATRACE_END("MSMFB_DISPLAY_COMMIT");
+		break;
+
+	case OLD_MSMFB_DISPLAY_COMMIT:
+		ATRACE_BEGIN("MSMFB_DISPLAY_COMMIT");
+		ret = old_mdss_fb_display_commit(info, argp);
 		ATRACE_END("MSMFB_DISPLAY_COMMIT");
 		break;
 
