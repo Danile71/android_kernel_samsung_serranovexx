@@ -1709,7 +1709,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
 #ifdef	CONFIG_USB_OTG_BLACKLIST_HUB
 	if (hdev->parent) {
 		dev_warn(&intf->dev, "ignoring external hub\n");
-		otg_send_event(OTG_EVENT_HUB_NOT_SUPPORTED);
+		otg_send_event(otg,OTG_EVENT_HUB_NOT_SUPPORTED);
 		return -ENODEV;
 	}
 #endif
@@ -2175,6 +2175,7 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
 
 #ifdef	CONFIG_USB_OTG
 	bool old_otg = false;
+        struct usb_otg *otg;
 	/*
 	 * OTG-aware devices on OTG-capable root hubs may be able to use SRP,
 	 * to wake us after we've powered off VBUS; and HNP, switching roles
@@ -2250,7 +2251,7 @@ out:
 
 	if (!is_targeted(udev)) {
 
-		otg_send_event(OTG_EVENT_DEV_NOT_SUPPORTED);
+		otg_send_event(otg,OTG_EVENT_DEV_NOT_SUPPORTED);
 
 		/* Maybe it can talk to us, though we can't talk to it.
 		 * (Includes HNP test device.)
@@ -3026,6 +3027,9 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 	int		port1 = udev->portnum;
 	int		status;
 	bool		really_suspend = true;
+#ifdef CONFIG_USB_OTG
+        struct usb_otg *otg;
+#endif
 
 	if (!hub)
 		return -ENODEV;
@@ -3075,7 +3079,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 				USB_DEVICE_B_HNP_ENABLE,
 				0, NULL, 0, USB_CTRL_SET_TIMEOUT);
 		if (status < 0) {
-			otg_send_event(OTG_EVENT_NO_RESP_FOR_HNP_ENABLE);
+			otg_send_event(otg,OTG_EVENT_NO_RESP_FOR_HNP_ENABLE);
 			dev_dbg(&udev->dev, "can't enable HNP on port %d, "
 					"status %d\n", port1, status);
 		} else {

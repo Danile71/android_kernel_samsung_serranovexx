@@ -74,6 +74,8 @@ struct subsys_desc {
 struct notif_data {
 	bool crashed;
 	int enable_ramdump;
+	bool no_auth;
+	struct platform_device *pdev;
 };
 
 #if defined(CONFIG_MSM_SUBSYSTEM_RESTART)

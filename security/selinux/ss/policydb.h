@@ -153,6 +153,13 @@ struct cond_bool_datum {
 
 struct cond_node;
 
+
+struct type_set {
+	struct ebitmap types;
+	struct ebitmap negset;
+	u32 flags;
+};
+
 /*
  * The configuration data includes security contexts for
  * initial SIDs, unlabeled file systems, TCP and UDP port numbers,

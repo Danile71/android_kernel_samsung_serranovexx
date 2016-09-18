@@ -600,6 +600,20 @@ config BALANCE_ANON_FILE_RECLAIM
 	  Swapping anonymous pages out to memory can be efficient enough to justify
 	  treating anonymous and file backed pages equally.
 
+config PROCESS_RECLAIM
+	bool "Enable process reclaim"
+	depends on PROC_FS
+	default n
+ 	help
+ 	 It allows to reclaim pages of the process by /proc/pid/reclaim.
+ 
+ 	 (echo file > /proc/PID/reclaim) reclaims file-backed pages only.
+ 	 (echo anon > /proc/PID/reclaim) reclaims anonymous pages only.
+ 	 (echo all > /proc/PID/reclaim) reclaims all pages.
+ 
+ 	 Any other vaule is ignored.
+
+
 config MIN_DIRTY_THRESH_PAGES
 	int "The lower bound of VM dirty_thresh value in number of pages"
 	default 2560

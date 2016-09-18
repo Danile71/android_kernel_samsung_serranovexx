@@ -115,8 +115,8 @@ config SECURITY_SELINUX_POLICYDB_VERSION_MAX
 config SECURITY_SELINUX_POLICYDB_VERSION_MAX_VALUE
 	int "NSA SELinux maximum supported policy format version value"
 	depends on SECURITY_SELINUX_POLICYDB_VERSION_MAX
-	range 15 23
-	default 19
+	range 15 30
+	default 30
 	help
 	  This option sets the value for the maximum policy format version
 	  supported by SELinux.

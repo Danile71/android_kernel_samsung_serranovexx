@@ -568,7 +568,7 @@ struct usb_device {
 	struct list_head filelist;
 
 	int maxchild;
-
+  	struct usb_device * children[USB_MAXCHILDREN];
 	u32 quirks;
 	atomic_t urbnum;
 

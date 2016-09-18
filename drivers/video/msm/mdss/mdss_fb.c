@@ -591,6 +591,10 @@ static int mdss_fb_probe(struct platform_device *pdev)
 	if (!pdata)
 		return -EPROBE_DEFER;
 
+	//of_property_read_u32(pdev->dev.of_node, "cell-index", &cell_index);
+ 	//if (cell_index > fbi_list_index)
+ 	//	return -EPROBE_DEFER;
+
 	/*
 	 * alloc framebuffer info + par data
 	 */

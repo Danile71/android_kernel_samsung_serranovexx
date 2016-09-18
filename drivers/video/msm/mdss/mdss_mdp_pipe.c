@@ -312,7 +312,8 @@ static int mdss_mdp_calc_stride(struct mdss_mdp_pipe *pipe,
 	int rc = 0;
 	u32 format, seg_w = 0;
 
-	width = pipe->src.w >> pipe->horz_deci;
+	width = DECIMATED_DIMENSION(pipe->src.w, pipe->horz_deci);
+
 
 	if (pipe->bwc_mode) {
 		rc = mdss_mdp_get_rau_strides(pipe->src.w, pipe->src.h,

@@ -105,7 +105,7 @@
 		qcom,mdss-pan-physical-width-dimension = <55>;
 		qcom,mdss-pan-physical-height-dimension = <95>;
 		qcom,mdss-dsi-lp11-init;
-		qcom,mdss-dsi-init-delay-us = <2000>;
+		qcom,mdss-dsi-init-delay-us = <200>;
 		qcom,mdss-dsi-panel-orientation = "hflip";
 
 		qcom,mdss-dsi-panel-status-check-mode="reg_read_irq";

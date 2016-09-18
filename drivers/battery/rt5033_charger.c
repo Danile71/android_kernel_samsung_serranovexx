@@ -1425,7 +1425,7 @@ static int rt5033_charger_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, charger);
 
 	charger->psy_chg.name           = "rt5033-charger";
-	charger->psy_chg.type           = POWER_SUPPLY_TYPE_UNKNOWN;
+	charger->psy_chg.type           = POWER_SUPPLY_TYPE_BATTERY;
 	charger->psy_chg.get_property   = sec_chg_get_property;
 	charger->psy_chg.set_property   = sec_chg_set_property;
 	charger->psy_chg.properties     = sec_charger_props;

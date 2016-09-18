@@ -103,7 +103,7 @@ struct ehci_hcd {			/* one per controller */
 	unsigned		enabled_hrtimer_events;
 	ktime_t			hr_timeouts[EHCI_HRTIMER_NUM_EVENTS];
 	struct hrtimer		hrtimer;
-
+	struct usb_phy	*transceiver;
 	int			PSS_poll_count;
 	int			ASS_poll_count;
 	int			died_poll_count;
