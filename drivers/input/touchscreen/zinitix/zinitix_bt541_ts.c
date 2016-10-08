@@ -367,7 +367,7 @@ static void get_chip_name(void *device_data);
 static void get_x_num(void *device_data);
 static void get_y_num(void *device_data);
 static void not_support_cmd(void *device_data);
-
+#define GLOVE_MODE
 /* Vendor dependant command */
 /* static void run_reference_read(void *device_data); */
 static void get_reference(void *device_data);
