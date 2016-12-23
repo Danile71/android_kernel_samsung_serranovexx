@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -36,6 +36,9 @@
                
    Definitions for platform independent
   
+   Copyright 2010 (c) Qualcomm, Incorporated.  All Rights Reserved.
+   
+   Qualcomm Confidential and Proprietary.
   
   ========================================================================*/
 
@@ -326,16 +329,6 @@ void wpalWlanReload(void);
 void wpalWcnssResetIntr(void);
 
 /*---------------------------------------------------------------------------
-    wpalWcnssIsProntoHwVer3 -  Check for Pronto ver3 HW
-
-    Param:
-       None
-    Return:
-       TRUE if Ponto Hw Ver 3
-       Therefore use WQ6 instead of WQ23 for TX Low/High Priority Channel
----------------------------------------------------------------------------*/
-int wpalWcnssIsProntoHwVer3(void);
-/*---------------------------------------------------------------------------
     wpalFwDumpReq -  Trigger the dump commands to Firmware
 
     Param:
@@ -364,14 +357,14 @@ void wpalFwDumpReq(wpt_uint32 cmd, wpt_uint32 arg1, wpt_uint32 arg2,
 void wpalDevicePanic(void);
 
 /*---------------------------------------------------------------------------
-    wpalIslogPInProgress -  calls vos API vos_is_logp_in_progress()
+    wpalIsWDresetInProgress -  calls vos API isWDresetInProgress()
 
     Param:
        NONE
     Return:
        STATUS
 --------------------------------------------------------------------------*/
-int  wpalIslogPInProgress(void);
+int  wpalIsWDresetInProgress(void);
 
 /*---------------------------------------------------------------------------
     wpalIsSsrPanicOnFailure -  calls vos API isSsrPanicOnFailure()
@@ -382,11 +375,4 @@ int  wpalIslogPInProgress(void);
        STATUS
 --------------------------------------------------------------------------*/
 int  wpalIsSsrPanicOnFailure(void);
-
-int  wpalGetDxeReplenishRXTimerVal(void);
-int  wpalIsDxeSSREnable(void);
-
-wpt_uint8 wpalIsFwLoggingEnabled(void);
-wpt_uint8 wpalIsFwLoggingSupported(void);
-wpt_uint8 wpalIsFwEvLoggingEnabled(void);
 #endif // __WLAN_QCT_PAL_API_H

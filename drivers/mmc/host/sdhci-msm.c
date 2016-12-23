@@ -301,6 +301,7 @@ struct sdhci_msm_pltfm_data {
 	unsigned char sup_clk_cnt;
 	int mpm_sdiowakeup_int;
 	int sdiowakeup_irq;
+	enum pm_qos_req_type cpu_affinity_type;
 };
 
 struct sdhci_msm_bus_vote {
@@ -1386,6 +1387,30 @@ out:
 	return ret;
 }
 
+#ifdef CONFIG_SMP
+static void sdhci_msm_populate_affinity_type(struct sdhci_msm_pltfm_data *pdata,
+					     struct device_node *np)
+{
+	const char *cpu_affinity = NULL;
+
+	pdata->cpu_affinity_type = PM_QOS_REQ_AFFINE_IRQ;
+	if (!of_property_read_string(np, "qcom,cpu-affinity",
+				    &cpu_affinity)) {
+		if (!strcmp(cpu_affinity, "all_cores"))
+			pdata->cpu_affinity_type = PM_QOS_REQ_ALL_CORES;
+		else if (!strcmp(cpu_affinity, "affine_cores"))
+			pdata->cpu_affinity_type = PM_QOS_REQ_AFFINE_CORES;
+		else if (!strcmp(cpu_affinity, "affine_irq"))
+			pdata->cpu_affinity_type = PM_QOS_REQ_AFFINE_IRQ;
+	}
+}
+#else
+static void sdhci_msm_populate_affinity_type(struct sdhci_msm_pltfm_data *pdata,
+					     struct device_node *np)
+{
+}
+#endif
+
 /* Parse platform data */
 static struct sdhci_msm_pltfm_data *sdhci_msm_populate_pdata(struct device *dev)
 {
@@ -1497,6 +1522,8 @@ static struct sdhci_msm_pltfm_data *sdhci_msm_populate_pdata(struct device *dev)
 		pdata->mpm_sdiowakeup_int = mpm_int;
 	else
 		pdata->mpm_sdiowakeup_int = -1;
+
+	sdhci_msm_populate_affinity_type(pdata, np);
 
 	return pdata;
 out:

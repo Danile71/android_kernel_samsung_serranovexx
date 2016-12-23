@@ -45,8 +45,8 @@ struct bw_hwmon {
 	void (*stop_hwmon)(struct bw_hwmon *hw);
 	int (*suspend_hwmon)(struct bw_hwmon *hw);
 	int (*resume_hwmon)(struct bw_hwmon *hw);
-	unsigned long (*set_thres)(struct bw_hwmon *hw, unsigned long bytes);
-	unsigned long (*get_bytes_and_clear)(struct bw_hwmon *hw);
+	unsigned long (*meas_bw_and_set_irq)(struct bw_hwmon *hw,
+					unsigned int tol, unsigned int us);
 	struct device *dev;
 	struct device_node *of_node;
 	struct devfreq_governor *gov;
