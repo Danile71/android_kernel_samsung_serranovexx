@@ -370,7 +370,9 @@
 			<  998400000 5>,
 			< 1094400000 6>,
 			< 1209600000 7>,
-			< 1401600000 8>;
+			< 1363200000 8>,
+			< 1401600000 9>,
+	                < 1516800000 10>;
 	};
 
 	cpubw: qcom,cpubw {
@@ -403,7 +405,7 @@
 			 <  998400  3051>,
 			 < 1094400  3051>,
 			 < 1209600  4066>,
-			 < 1401600  4066>;
+			 < 1516800  4066>;
 		};
 	};
 
@@ -418,7 +420,9 @@
 			 <  998400 >,
 			 < 1094400 >,
 		         < 1209600 >,
-			 < 1401600 >;
+			 < 1363200 >,
+			 < 1401600 >,
+	                 < 1516800 >;
 	};
 
 	qcom,sps {
@@ -1577,11 +1581,11 @@
 		compatible = "qcom,msm-thermal";
 		qcom,sensor-id = <5>;
 		qcom,poll-ms = <250>;
-		qcom,limit-temp = <60>;
+		qcom,limit-temp = <80>;
 		qcom,temp-hysteresis = <10>;
 		qcom,freq-step = <2>;
 		qcom,freq-control-mask = <0xf>;
-		qcom,core-limit-temp = <80>;
+		qcom,core-limit-temp = <85>;
 		qcom,core-temp-hysteresis = <10>;
 		qcom,core-control-mask = <0xe>;
 		qcom,hotplug-temp = <105>;
@@ -1592,7 +1596,6 @@
 		qcom,freq-mitigation-temp-hysteresis = <15>;
 		qcom,freq-mitigation-value = <400000>;
 		qcom,freq-mitigation-control-mask = <0x01>;
-		qcom,online-hotplug-core;
 		qcom,vdd-restriction-temp = <5>;
 		qcom,vdd-restriction-temp-hysteresis = <10>;
 		vdd-dig-supply = <&pm8916_s1_floor_corner>;
