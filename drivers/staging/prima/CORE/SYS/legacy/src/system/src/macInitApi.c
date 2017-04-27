@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2016 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -154,7 +154,11 @@ tSirRetStatus macStop(tHalHandle hHal, tHalStopType stopType)
 {
     tANI_U8 i;
     tpAniSirGlobal pMac = (tpAniSirGlobal) hHal;
-    peStop(pMac);
+
+    //In FTM mode,  peStart is not called during driver load.
+    if (pMac->gDriverType != eDRIVER_TYPE_MFG)
+        peStop(pMac);
+
     cfgCleanup( pMac );
     // need to free memory if not called in reset context.
     // in reset context this memory will be freed by HDD.
@@ -197,7 +201,7 @@ tSirRetStatus macOpen(tHalHandle *pHalHandle, tHddHandle hHdd, tMacOpenParameter
      */
 
     /* Allocate pMac */
-    pMac = vos_mem_malloc(sizeof(tAniSirGlobal));
+    pMac = vos_mem_vmalloc(sizeof(tAniSirGlobal));
     if ( NULL == pMac )
         return eSIR_FAILURE;
 
@@ -219,11 +223,17 @@ tSirRetStatus macOpen(tHalHandle *pHalHandle, tHddHandle hHdd, tMacOpenParameter
     {
         /* Call various PE (and other layer init here) */
         if( eSIR_SUCCESS != logInit(pMac))
+        {
+           vos_mem_vfree(pMac);
            return eSIR_FAILURE;
+        }
 
         /* Call routine to initialize CFG data structures */
         if( eSIR_SUCCESS != cfgInit(pMac) )
+        {
+            vos_mem_vfree(pMac);
             return eSIR_FAILURE;
+        }
 
         sysInitGlobals(pMac);
     }
@@ -253,7 +263,7 @@ tSirRetStatus macClose(tHalHandle hHal)
     logDeinit(pMac);
 
     // Finally, de-allocate the global MAC datastructure:
-    vos_mem_free( pMac );
+    vos_mem_vfree( pMac );
 
     return eSIR_SUCCESS;
 }

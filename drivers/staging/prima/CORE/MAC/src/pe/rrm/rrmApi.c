@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2015, 2017 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -45,7 +45,7 @@
 #include "wniApi.h"
 #include "sirApi.h"
 #include "aniGlobal.h"
-#include "wniCfgSta.h"
+#include "wniCfg.h"
 #include "limTypes.h"
 #include "limUtils.h"
 #include "limSendSmeRspMessages.h"
@@ -282,59 +282,25 @@ rrmProcessLinkMeasurementRequest( tpAniSirGlobal pMac,
       return eSIR_FAILURE;
    }
    pHdr = WDA_GET_RX_MAC_HEADER( pRxPacketInfo );
-   if( (uint8)(pSessionEntry->maxTxPower) != pLinkReq->MaxTxPower.maxTxPower )
-   {
-      PELOGW(limLog( pMac,
-                     LOGW,
-                     FL(" maxTx power in link request is not same as local... "
-                        " Local = %d LinkReq = %d"),
-                     pSessionEntry->maxTxPower,
-                     pLinkReq->MaxTxPower.maxTxPower );)
-      if( (MIN_STA_PWR_CAP_DBM <= pLinkReq->MaxTxPower.maxTxPower) &&
-         (MAX_STA_PWR_CAP_DBM >= pLinkReq->MaxTxPower.maxTxPower) )
-      {
-         LinkReport.txPower = pLinkReq->MaxTxPower.maxTxPower;
-      }
-      else if( MIN_STA_PWR_CAP_DBM > pLinkReq->MaxTxPower.maxTxPower )
-      {
-         LinkReport.txPower = MIN_STA_PWR_CAP_DBM;
-      }
-      else if( MAX_STA_PWR_CAP_DBM < pLinkReq->MaxTxPower.maxTxPower )
-      {
-         LinkReport.txPower = MAX_STA_PWR_CAP_DBM;
-      }
+   LinkReport.txPower = limGetMaxTxPower (pSessionEntry->maxTxPower,
+       pLinkReq->MaxTxPower.maxTxPower,
+       pMac->roam.configParam.nTxPowerCap);
 
-      if( (LinkReport.txPower != (uint8)(pSessionEntry->maxTxPower)) &&
-          (eSIR_SUCCESS == rrmSendSetMaxTxPowerReq ( pMac,
-                                                     (tPowerdBm)(LinkReport.txPower),
-                                                     pSessionEntry)) )
-      {
-         pSessionEntry->maxTxPower = (tPowerdBm)(LinkReport.txPower);
-      }
-   }
-   else
+   if ((LinkReport.txPower != (uint8)(pSessionEntry->maxTxPower)) &&
+       (eSIR_SUCCESS == rrmSendSetMaxTxPowerReq (pMac,
+                                                 (tPowerdBm)(LinkReport.txPower),
+                                                 pSessionEntry)))
    {
-      if( (MIN_STA_PWR_CAP_DBM <= (uint8)(pSessionEntry->maxTxPower)) &&
-         (MAX_STA_PWR_CAP_DBM >= (uint8)(pSessionEntry->maxTxPower)) )
-      {
-         LinkReport.txPower = (uint8)(pSessionEntry->maxTxPower);
-      }
-      else if( MIN_STA_PWR_CAP_DBM > (uint8)(pSessionEntry->maxTxPower) )
-      {
-         LinkReport.txPower = MIN_STA_PWR_CAP_DBM;
-      }
-      else if( MAX_STA_PWR_CAP_DBM < (uint8)(pSessionEntry->maxTxPower) )
-      {
-         LinkReport.txPower = MAX_STA_PWR_CAP_DBM;
-      }
+     PELOGW (limLog (pMac,
+           LOGW,
+           FL(" maxTx power in link report is not same as local..."
+             " Local = %d Link Request TxPower = %d"
+             " Link Report TxPower = %d"),
+           pSessionEntry->maxTxPower,
+           LinkReport.txPower,
+           pLinkReq->MaxTxPower.maxTxPower);)
+       pSessionEntry->maxTxPower = (tPowerdBm)(LinkReport.txPower);
    }
-   PELOGW(limLog( pMac,
-                  LOGW,
-                  FL(" maxTx power in link request is not same as local... "
-                     " Local = %d Link Report TxPower = %d"),
-                  pSessionEntry->maxTxPower,
-                  LinkReport.txPower );)
-
    LinkReport.dialogToken = pLinkReq->DialogToken.token;
    LinkReport.rxAntenna = 0;
    LinkReport.txAntenna = 0;
@@ -450,7 +416,8 @@ rrmProcessNeighborReportResponse( tpAniSirGlobal pMac,
    //Send request to SME.
    mmhMsg.type    = pSmeNeighborRpt->messageType;
    mmhMsg.bodyptr = pSmeNeighborRpt;
-   MTRACE(macTraceMsgTx(pMac, pSessionEntry->peSessionId, mmhMsg.type));
+   MTRACE(macTrace(pMac, TRACE_CODE_TX_SME_MSG, pSessionEntry->peSessionId,
+                                                           mmhMsg.type));
    status = limSysProcessMmhMsgApi(pMac, &mmhMsg, ePROT);
 
    return status;
@@ -669,7 +636,8 @@ rrmProcessBeaconReportReq( tpAniSirGlobal pMac,
    //Send request to SME.
    mmhMsg.type    = eWNI_SME_BEACON_REPORT_REQ_IND;
    mmhMsg.bodyptr = pSmeBcnReportReq;
-   MTRACE(macTraceMsgTx(pMac, pSessionEntry->peSessionId, mmhMsg.type));
+   MTRACE(macTrace(pMac, TRACE_CODE_TX_SME_MSG, pSessionEntry->peSessionId,
+                                                           mmhMsg.type));
    return limSysProcessMmhMsgApi(pMac, &mmhMsg, ePROT);
 }
 
